@@ -12,13 +12,21 @@ supported entities (+possible actions):
 Response format:
 JSON
 
+Response with error contains "err" key with error message
+
 ========================================================
 
 EXAMPLES:
 
 http://dev.bookmarks.com/bookmark/create?uri=test1
+http://dev.bookmarks.com/bookmark/create?uri=test2
+http://dev.bookmarks.com/bookmark/create?uri=test3
 http://dev.bookmarks.com/bookmark/get-last
-http://dev.bookmarks.com/bookmark/get-by-uri-with-comments?uri=test5
-http://dev.bookmarks.com/comment/create?id=5&text=test_comment7
-http://dev.bookmarks.com/comment/update?id=13&text=test_comment13_updated
-http://dev.bookmarks.com/comment/delete?id=11
+http://dev.bookmarks.com/comment/create?id=1&text=test_comment_1_1
+http://dev.bookmarks.com/comment/create?id=1&text=test_comment_1_2
+http://dev.bookmarks.com/comment/create?id=2&text=test_comment_2_1
+http://dev.bookmarks.com/comment/create?id=3&text=test_comment_3_1
+http://dev.bookmarks.com/comment/update?id=3&text=test_comment_3_1_updated
+http://dev.bookmarks.com/bookmark/get-by-uri-with-comments?uri=test3
+http://dev.bookmarks.com/comment/delete?id=1
+http://dev.bookmarks.com/comment/delete?id=2

@@ -11,4 +11,4 @@ ini_set('error_log', __DIR__ . '/../php.log');
 
 require_once '../app.php';
 
-return (new App($_SERVER, $_REQUEST))->run();
+(new App($_SERVER, $_REQUEST))->run();

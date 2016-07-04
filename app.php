@@ -6,6 +6,10 @@
  * Date: 7/4/16
  * Time: 3:36 PM
  */
+
+/**
+ * Class App
+ */
 class App
 {
     /** @var string */
@@ -15,7 +19,7 @@ class App
     protected $action;
 
     /** @var array */
-    protected $data = [];
+    protected $req = [];
 
     /** @var string */
     protected $ip;
@@ -40,7 +44,8 @@ class App
             if (isset($path[1]))
                 $this->action = $path[1];
         }
-        $this->data = $req;
+
+        $this->req = $req;
     }
 
     public function __destruct()
@@ -124,12 +129,12 @@ class App
      */
     protected function actionBookmarkCreate()
     {
-        if (!isset($this->data['uri']))
+        if (!isset($this->req['uri']))
             return $this->output([
                 'err' => 'invalid bookmark uri'
             ]);
 
-        if (!parse_url($this->data['uri']))
+        if (!parse_url($this->req['uri']))
             return $this->output([
                 'err' => 'invalid bookmark uri'
             ]);
@@ -137,18 +142,18 @@ class App
         $query = join(' ', [
             'SELECT id',
             'FROM bookmark',
-            'WHERE uri = \'' . $this->data['uri'] . '\''
+            'WHERE uri = \'' . $this->req['uri'] . '\''
         ]);
 
-        if ($bookmark = $this->db($query))
+        if ($bookmarks = $this->db($query))
             return $this->output([
-                'id' => $bookmark[0]['id']
+                'id' => $bookmarks[0]['id']
             ]);
 
         $query = join(' ', [
             'INSERT INTO',
             'bookmark (uri, created_at)',
-            'VALUES (\'' . addslashes($this->data['uri']) . '\', NOW())'
+            'VALUES (\'' . addslashes($this->req['uri']) . '\', NOW())'
         ]);
 
         if ($this->db($query))
@@ -167,12 +172,12 @@ class App
      */
     protected function actionCommentCreate()
     {
-        if (!isset($this->data['id']))
+        if (!isset($this->req['id']))
             return $this->output([
                 'err' => 'invalid bookmark id'
             ]);
 
-        if (!isset($this->data['text']))
+        if (!isset($this->req['text']))
             return $this->output([
                 'err' => 'invalid comment text'
             ]);
@@ -180,7 +185,7 @@ class App
         $query = join(' ', [
             'SELECT *',
             'FROM bookmark',
-            'WHERE id = \'' . $this->data['id'] . '\''
+            'WHERE id = ' . $this->req['id']
         ]);
 
         if (!$bookmarks = $this->db($query))
@@ -193,7 +198,7 @@ class App
         $query = join(' ', [
             'INSERT INTO',
             'comment (text, ip, created_at)',
-            'VALUES (\'' . addslashes($this->data['text']) . '\', \'' . $this->ip . '\', NOW())'
+            'VALUES (\'' . addslashes($this->req['text']) . '\', \'' . $this->ip . '\', NOW())'
         ]);
 
         if (!$this->db($query))
@@ -224,12 +229,12 @@ class App
      */
     protected function actionCommentUpdate()
     {
-        if (!isset($this->data['id']))
+        if (!isset($this->req['id']))
             return $this->output([
                 'err' => 'invalid comment id'
             ]);
 
-        if (!isset($this->data['text']))
+        if (!isset($this->req['text']))
             return $this->output([
                 'err' => 'invalid comment text'
             ]);
@@ -237,7 +242,7 @@ class App
         $query = join(' ', [
             'SELECT *, UNIX_TIMESTAMP(created_at) AS created_at',
             'FROM comment',
-            'WHERE id = \'' . $this->data['id'] . '\''
+            'WHERE id = ' . $this->req['id']
         ]);
 
         if (!$comments = $this->db($query))
@@ -259,8 +264,8 @@ class App
 
         $query = join(' ', [
             'UPDATE comment',
-            'SET text = \'' . $this->data['text'] . '\'',
-            'WHERE id = \'' . $this->data['id'] . '\''
+            'SET text = \'' . $this->req['text'] . '\'',
+            'WHERE id = ' . $this->req['id']
         ]);
 
         if ($this->db($query))
@@ -274,11 +279,12 @@ class App
     }
 
     /**
+     * @todo delete comment id from bookmarks (+transaction if so)
      * @return bool
      */
     protected function actionCommentDelete()
     {
-        if (!isset($this->data['id']))
+        if (!isset($this->req['id']))
             return $this->output([
                 'err' => 'invalid comment id'
             ]);
@@ -286,7 +292,7 @@ class App
         $query = join(' ', [
             'SELECT *, UNIX_TIMESTAMP(created_at) as created_at',
             'FROM comment',
-            'WHERE id = \'' . $this->data['id'] . '\''
+            'WHERE id = ' . $this->req['id']
         ]);
 
         if (!$comments = $this->db($query))
@@ -326,7 +332,7 @@ class App
      */
     protected function actionBookmarkGetByUriWithComments()
     {
-        if (!isset($this->data['uri']))
+        if (!isset($this->req['uri']))
             return $this->output([
                 'err' => 'invalid bookmark uri'
             ]);
@@ -334,7 +340,7 @@ class App
         $query = join(' ', [
             'SELECT *',
             'FROM bookmark',
-            'WHERE uri = \'' . $this->data['uri'] . '\''
+            'WHERE uri = \'' . $this->req['uri'] . '\''
         ]);
 
         if (!$bookmarks = $this->db($query))
@@ -353,7 +359,7 @@ class App
         $query = join(' ', [
             'SELECT *',
             'FROM comment',
-            'WHERE id IN (\'' . join('\', \'', $tmp) . '\')'
+            'WHERE id IN (' . join(',  ', $tmp) . ')'
         ]);
 
         if (!$comments = $this->db($query))
@@ -373,7 +379,8 @@ class App
     {
         $query = join(' ', [
             'SELECT *',
-            'FROM bookmark'
+            'FROM bookmark',
+            'LIMIT 10'
         ]);
 
         $bookmarks = $this->db($query);

@@ -15,8 +15,8 @@ Local setup example:
 	DocumentRoot /var/www/bookmarks.com/web
 
 	<Directory /var/www/bookmarks.com/web>
-		DirectoryIndex /index.php
-		FallbackResource /index.php
+		DirectoryIndex /app.php
+		FallbackResource /app.php
 	</Directory>
 
         LogLevel notice
