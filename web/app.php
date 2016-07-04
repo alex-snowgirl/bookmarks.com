@@ -11,4 +11,6 @@ ini_set('error_log', __DIR__ . '/../php.log');
 
 require_once '../app.php';
 
-(new App($_SERVER, $_REQUEST))->run();
+$_CONFIG = parse_ini_file('../app.ini', true);
+
+(new App($_SERVER, $_REQUEST, $_CONFIG))->run();

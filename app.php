@@ -30,9 +30,13 @@ class App
     /** @var array */
     protected $config = [];
 
-    public function __construct(array $srv, array $req)
+    /**
+     * @param array $srv
+     * @param array $req
+     * @param array $config
+     */
+    public function __construct(array $srv, array $req, array $config)
     {
-        $this->config = parse_ini_file(__DIR__ . '/app.ini', true);
         $this->ip = isset($srv['REMOTE_ADDR']) ? $srv['REMOTE_ADDR'] : null;
 
         if ($tmp = parse_url($srv['REQUEST_URI'])) {
@@ -45,6 +49,7 @@ class App
                 $this->action = $path[1];
         }
 
+        $this->config = $config;
         $this->req = $req;
     }
 
