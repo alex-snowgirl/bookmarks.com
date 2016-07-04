@@ -142,7 +142,7 @@ class App
         $query = join(' ', [
             'SELECT id',
             'FROM bookmark',
-            'WHERE uri = \'' . $this->req['uri'] . '\''
+            'WHERE uri = \'' . addslashes($this->req['uri']) . '\''
         ]);
 
         if ($bookmarks = $this->db($query))
@@ -185,7 +185,7 @@ class App
         $query = join(' ', [
             'SELECT *',
             'FROM bookmark',
-            'WHERE id = ' . $this->req['id']
+            'WHERE id = ' . (int)$this->req['id']
         ]);
 
         if (!$bookmarks = $this->db($query))
@@ -242,7 +242,7 @@ class App
         $query = join(' ', [
             'SELECT *, UNIX_TIMESTAMP(created_at) AS created_at',
             'FROM comment',
-            'WHERE id = ' . $this->req['id']
+            'WHERE id = ' . (int)$this->req['id']
         ]);
 
         if (!$comments = $this->db($query))
@@ -264,8 +264,8 @@ class App
 
         $query = join(' ', [
             'UPDATE comment',
-            'SET text = \'' . $this->req['text'] . '\'',
-            'WHERE id = ' . $this->req['id']
+            'SET text = \'' . addslashes($this->req['text']) . '\'',
+            'WHERE id = ' . $comment['id']
         ]);
 
         if ($this->db($query))
@@ -292,7 +292,7 @@ class App
         $query = join(' ', [
             'SELECT *, UNIX_TIMESTAMP(created_at) as created_at',
             'FROM comment',
-            'WHERE id = ' . $this->req['id']
+            'WHERE id = ' . (int)$this->req['id']
         ]);
 
         if (!$comments = $this->db($query))
@@ -340,7 +340,7 @@ class App
         $query = join(' ', [
             'SELECT *',
             'FROM bookmark',
-            'WHERE uri = \'' . $this->req['uri'] . '\''
+            'WHERE uri = \'' . addslashes($this->req['uri']) . '\''
         ]);
 
         if (!$bookmarks = $this->db($query))
